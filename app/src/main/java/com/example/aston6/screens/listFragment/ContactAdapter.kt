@@ -4,10 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.aston6.repository.ListItem
 import com.example.aston6.databinding.ListItemBinding
+import com.example.aston6.repository.ListItem
 
-class ContactAdapter : RecyclerView.Adapter<ListViewHolder>() {
+class ContactAdapter() : RecyclerView.Adapter<ListViewHolder>() {
 
     var listItem: ArrayList<ListItem> = arrayListOf()
         set(newValue) {
@@ -42,3 +42,11 @@ class ContactAdapter : RecyclerView.Adapter<ListViewHolder>() {
         }
     }
 }
+
+
+
+
+
+
+
+

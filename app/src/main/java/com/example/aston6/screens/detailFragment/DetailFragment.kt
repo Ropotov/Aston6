@@ -46,6 +46,8 @@ class DetailFragment : Fragment() {
         )
         setFragmentResult("requestKey", bundleOf("listItem" to newItem))
         parentFragmentManager.popBackStack()
+        parentFragmentManager.beginTransaction()
+            .remove(this).commit()
     }
 
     private fun initViews() {
