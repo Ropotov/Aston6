@@ -3,22 +3,13 @@ package com.example.aston6.screens.listFragment
 import androidx.recyclerview.widget.DiffUtil
 import com.example.aston6.repository.ListItem
 
-class DiffUtilCallback(
-    private val oldList: MutableList<ListItem>,
-    private val newList: MutableList<ListItem>,
-) : DiffUtil.Callback() {
+class DiffUtilCallback : DiffUtil.ItemCallback<ListItem>() {
 
-    override fun getOldListSize(): Int = oldList.size
-
-    override fun getNewListSize(): Int = newList.size
-
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldItem = oldList[oldItemPosition]
-        val newItem = newList[newItemPosition]
+    override fun areItemsTheSame(oldItem: ListItem, newItem: ListItem): Boolean {
         return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+    override fun areContentsTheSame(oldItem: ListItem, newItem: ListItem): Boolean {
         return false
     }
 }

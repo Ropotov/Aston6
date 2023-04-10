@@ -19,13 +19,11 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
 
     private lateinit var binding: FragmentListBinding
     private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: ContactAdapter
     private lateinit var newItem: ListItem
-    private val viewModel by lazy {
-        ViewModelProvider(this)[ListViewModel::class.java]
-    }
     private var listItem = ArrayList<ListItem>()
     private var searchText = ""
+    private val adapter by lazy { ContactAdapter() }
+    private val viewModel by lazy { ViewModelProvider(this)[ListViewModel::class.java] }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,11 +45,27 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
         val navigator = requireActivity() as Navigator
         initRecyclerView()
         setListeners(navigator)
+        setObservers()
+    }
 
+    private fun search(searchText: String) {
+        this.searchText = searchText
+        val filteredList: ArrayList<ListItem> = ArrayList()
+        for (item in listItem) {
+            if (item.firstName.lowercase()
+                    .contains(searchText.lowercase()) || item.lastName.lowercase()
+                    .contains(searchText.lowercase())
+            ) {
+                filteredList.add(item)
+            }
+            adapter.submitList(filteredList)
+        }
+    }
+
+    private fun setObservers() {
         viewModel.list.observe(viewLifecycleOwner) {
-            listItem.clear()
-            listItem.addAll(it)
-            filter(searchText)
+            listItem = it
+            search(searchText)
         }
     }
 
@@ -67,22 +81,12 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
 
     private fun initRecyclerView() {
         recyclerView = binding.recyclerView
-        adapter = ContactAdapter()
         recyclerView.adapter = adapter
-        recyclerView.addItemDecoration(
-            DividerItemDecoration(
-                binding.recyclerView.context, DividerItemDecoration.VERTICAL
-            )
-        )
+        recyclerView.addItemDecoration(DividerItemDecoration(binding.recyclerView.context, DividerItemDecoration.VERTICAL))
         val itemAnimator = binding.recyclerView.itemAnimator
         if (itemAnimator is DefaultItemAnimator) {
             itemAnimator.supportsChangeAnimations = false
         }
-    }
-
-    companion object {
-        @JvmStatic
-        fun newInstance() = ListFragment()
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
@@ -91,22 +95,13 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
 
     override fun onQueryTextChange(newText: String?): Boolean {
         if (newText != null) {
-            filter(newText)
+            search(newText)
         }
         return false
     }
 
-    private fun filter(searchText: String) {
-        this.searchText = searchText
-        val filteredList: ArrayList<ListItem> = ArrayList()
-        for (item in listItem) {
-            if (item.firstName.lowercase()
-                    .contains(searchText.lowercase()) || item.lastName.lowercase()
-                    .contains(searchText.lowercase())
-            ) {
-                filteredList.add(item)
-            }
-            adapter.listItem = filteredList
-        }
+    companion object {
+        @JvmStatic
+        fun newInstance() = ListFragment()
     }
 }
